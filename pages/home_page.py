@@ -9,3 +9,4 @@ class HomePage(BasePage):
     def open_home_page(self):
         self.go_home()
 
+
