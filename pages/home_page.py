@@ -1,5 +1,4 @@
 import allure
-import time
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
 from locators.homepage_locators import HomePageLocators
@@ -61,8 +60,7 @@ class HomePage(BasePage):
         drag_and_drop_html5(self.driver, ingredient_el, target_el)
         
         # Браузеру необходимо время завершить выполнение JS-скриптов и обновить состояние кнопки (специфика React)
-        time.sleep(0.5)
-        # self.wait_clickable(target_el) 
+        self.wait_clickable(target_el) 
         
         # Кликаем по кнопке оформления заказа
         target_el.click()

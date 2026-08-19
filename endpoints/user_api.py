@@ -2,6 +2,7 @@ import requests
 import allure
 from urls import USER_REGISTER, USER_LOGIN, USER_DATA
 
+
 class UserApi:
     def __init__(self, base_url):
         self.base_url = base_url
