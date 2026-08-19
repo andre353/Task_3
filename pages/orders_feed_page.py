@@ -25,19 +25,19 @@ class OrdersFeedPage(BasePage):
         element = self.wait_visible(OrdersFeedLocators.DONE_TODAY_COUNTER)
         return int(element.text)
 
-    @allure.step("Дождаться, пока счетчик 'Выполнено за все время' изменится")
+    @allure.step("Дождаться, пока счетчик 'Выполнено за все время' увеличится по сравнению со стартовым")
     def wait_for_all_time_counter_to_change(self, initial_value):
-        # Ждем, пока текст элемента станет не равен стартовому значению
-        self.wait.until(
-            lambda d: d.find_element(*OrdersFeedLocators.DONE_FOR_ALL_TIME_COUNTER).text != str(initial_value)
+        # Метод вернет True, как только число в DOM станет больше initial_value
+        return self.wait.until(
+            lambda d: int(d.find_element(*OrdersFeedLocators.DONE_FOR_ALL_TIME_COUNTER).text) > initial_value
         )
 
-    @allure.step("Дождаться, пока счетчик 'Выполнено за сегодня' изменится")
+    @allure.step("Дождаться, пока счетчик 'Выполнено за сегодня' увеличивается по сравнению со стартовым")
     def wait_for_today_counter_to_change(self, initial_value):
-        # Ждем, пока текст элемента станет не равен стартовому значению
-        self.wait.until(
-            lambda d: d.find_element(*OrdersFeedLocators.DONE_TODAY_COUNTER).text != str(initial_value)
-        )
+        # Метод вернет True, как только число в DOM станет больше initial_value
+        return self.wait.until(
+            lambda d: int(d.find_element(*OrdersFeedLocators.DONE_TODAY_COUNTER).text) > initial_value
+        )    
 
     @allure.step("Получить список номеров всех заказов из раздела 'В работе'")
     def get_orders_in_progress(self):

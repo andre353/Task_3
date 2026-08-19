@@ -10,7 +10,7 @@ class TestOrdersFeed:
     @allure.title("Если кликнуть на заказ, откроется всплывающее окно с деталями")
     def test_click_order_opens_popup_details(self, driver):
         feed_page = OrdersFeedPage(driver)
-        home_page = HomePage(driver) # Используем методы проверки модалок из HomePage
+        home_page = HomePage(driver)
 
         feed_page.open_feed_page()
         feed_page.click_first_order()
@@ -18,7 +18,7 @@ class TestOrdersFeed:
         assert home_page.is_popup_displayed(), "Всплывающее окно с деталями заказа не открылось при клике!"
 
     @allure.title("После оформления заказа его номер появляется в разделе 'В работе'")
-    def test_new_order_appears_in_progress_section(self, driver, login_user_via_ui): # Изменили аргумент на login_user_via_ui
+    def test_new_order_appears_in_progress_section(self, driver, login_user_via_ui):
         feed_page = OrdersFeedPage(driver)
         home_page = HomePage(driver)
 
@@ -41,43 +41,52 @@ class TestOrdersFeed:
             assert any(short_order_id in order for order in orders_in_progress), \
                 f"Заказ {order_number} не найден в списке 'В работе'. Доступные номера: {orders_in_progress}"
 
-
     @allure.title("При создании нового заказа счётчик 'Выполнено за всё время' увеличивается")
     def test_all_time_counter_increments_on_new_order(self, driver, login_user_via_ui):
         feed_page = OrdersFeedPage(driver)
         home_page = HomePage(driver)
 
-        # Мы авторизованы и находимся на Главной странице. Сразу делаем заказ, пока сессия стабильна
+        with allure.step("Зафиксировать начальное значение счетчика 'За все время'"):
+            feed_page.open_feed_page()
+            initial_all_time = feed_page.get_all_time_counter_value()
+
         with allure.step("Оформить заказ через интерфейс Конструктора"):
             home_page.open_home_page()
             home_page.create_order_via_ui()
             home_page.click_close_popup_button()
 
-        with allure.step("Перейти в Ленту заказов и проверить, что счетчик 'За все время' больше нуля"):
+        with allure.step("Вернуться в Ленту заказов и дождаться изменения счетчика"):
             feed_page.open_feed_page()
-            # Принудительно очищаем кэш сокетов
+            # Принудительно сбрасываем кэш сокетов
             driver.execute_script("location.reload(true);")
             
-            new_all_time = feed_page.get_all_time_counter_value()
-            # Так как мы только что сделали заказ, счетчик глобально обязан быть больше 0
-            assert new_all_time > 0, f"Счетчик за все время равен нулю или не обновился: {new_all_time}"
+            # Метод ожидания возвращает True, когда и если число счетчика вырастет
+            counter_increased = feed_page.wait_for_all_time_counter_to_change(initial_all_time)
 
+        assert counter_increased, f"Счетчик 'За все время' не увеличился! Начальное значение: {initial_all_time}"
 
     @allure.title("При создании нового заказа счётчик 'Выполнено за сегодня' увеличивается")
     def test_today_counter_increments_on_new_order(self, driver, login_user_via_ui):
         feed_page = OrdersFeedPage(driver)
         home_page = HomePage(driver)
 
+        with allure.step("Зафиксировать начальное значение счетчика 'За сегодня'"):
+            feed_page.open_feed_page()
+            initial_today = feed_page.get_today_counter_value()
+
         with allure.step("Оформить заказ через интерфейс Конструктора"):
             home_page.open_home_page()
             home_page.create_order_via_ui()
             home_page.click_close_popup_button()
 
-        with allure.step("Перейти в Ленту заказов и проверить, что счетчик 'За сегодня' больше нуля"):
+        with allure.step("Вернуться в Ленту заказов и дождаться изменения счетчика"):
             feed_page.open_feed_page()
             driver.execute_script("location.reload(true);")
             
-            new_today = feed_page.get_today_counter_value()
-            assert new_today > 0, f"Счетчик за сегодня равен нулю или не обновился: {new_today}"
+            # Ждем изменения счетчика относительно зафиксированного начального значения
+            counter_increased = feed_page.wait_for_today_counter_to_change(initial_today)
+
+        assert counter_increased, f"Счетчик 'За сегодня' не увеличился! Начальное значение: {initial_today}"
+
 
 

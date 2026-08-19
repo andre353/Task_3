@@ -18,33 +18,29 @@ def generate_user_payload():
     }
 
 def drag_and_drop_html5(driver, source_element, target_element):
-    """Стабильный JS-скрипт для эмуляции HTML5 Drag and Drop в Chrome и Firefox"""
+    """JS-скрипт для эмуляции HTML5 Drag and Drop"""
     js_script = """
     var source = arguments[0];
     var target = arguments[1];
     
+    // Используем современный конструктор DataTransfer, который требует React-DnD в Firefox
+    var dataTransfer = new DataTransfer();
+    
     function createEvent(type) {
-        var event = document.createEvent("CustomEvent");
-        event.initCustomEvent(type, true, true, null);
-        event.dataTransfer = {
-            data: {},
-            setData: function (type, val) { this.data.type = val; },
-            getData: function (type) { return this.data.type; }
-        };
+        var event = new DragEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            dataTransfer: dataTransfer
+        });
         return event;
     }
     
-    var dragStartEvent = createEvent('dragstart');
-    source.dispatchEvent(dragStartEvent);
-    
-    var dragEnterEvent = createEvent('dragenter');
-    target.dispatchEvent(dragEnterEvent);
-    
-    var dropEvent = createEvent('drop');
-    dropEvent.dataTransfer = dragStartEvent.dataTransfer;
-    target.dispatchEvent(dropEvent);
-    
-    var dragEndEvent = createEvent('dragend');
-    source.dispatchEvent(dragEndEvent);
+    // Полноценная цепочка событий drag & drop
+    source.dispatchEvent(createEvent('dragstart'));
+    target.dispatchEvent(createEvent('dragenter'));
+    target.dispatchEvent(createEvent('dragover'));
+    target.dispatchEvent(createEvent('drop'));
+    source.dispatchEvent(createEvent('dragend'));
     """
     driver.execute_script(js_script, source_element, target_element)
+

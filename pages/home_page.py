@@ -1,7 +1,11 @@
 import allure
+import time
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
 from locators.homepage_locators import HomePageLocators
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import StaleElementReferenceException
+from helpers import drag_and_drop_html5
 
 
 class HomePage(BasePage):
@@ -9,7 +13,6 @@ class HomePage(BasePage):
     @allure.step("Открыть главную страницу Stellar Burgers через навигацию хедера")
     def open_home_page(self):
         from locators.homepage_locators import HomePageLocators
-        # Вместо self.go_home() используем клик по шапке, чтобы не сбросить сессию
         try:
             self.click(HomePageLocators.CONSTRUCTOR_HEADER_BUTTON)
         except Exception:
@@ -18,7 +21,7 @@ class HomePage(BasePage):
 
     @allure.step("Кликнуть на ингредиент для открытия модального окна")
     def click_ingredient(self):
-        self.click(HomePageLocators.INGREDIENT)
+        self.js_click(HomePageLocators.INGREDIENT)
 
     @allure.step("Проверить, что всплывающее окно с деталями отображается")
     def is_popup_displayed(self):
@@ -44,51 +47,54 @@ class HomePage(BasePage):
 
     @allure.step("Кликнуть по кнопке 'Оформить заказ'")
     def click_place_order_button(self):
-        self.click(HomePageLocators.PLACE_ORDER_BUTTON)
+        button = self.wait_clickable(HomePageLocators.PLACE_ORDER_BUTTON)
+        button.click()
 
-    @allure.step("Получить ID заказа из всплывающего окна подтверждения")
-    def get_popup_order_id(self):
-        # Ждем появления заголовка с номером заказа, получаем текст - id
-        element = self.wait_visible(HomePageLocators.POPUP_ORDER_ID)
-        return element.text
-
-    @allure.step("Оформить заказ чисто через UI (Drag and Drop и клик)")
+    @allure.step("Оформить заказ через UI (Drag and Drop и клик)")
     def create_order_via_ui(self):
-        from locators.homepage_locators import HomePageLocators
-        from selenium.webdriver.common.by import By
-        from helpers import drag_and_drop_html5
-        import time
         
         # Находим элементы на странице
         ingredient_el = self.wait_visible(HomePageLocators.INGREDIENT)
         target_el = self.wait_visible((By.XPATH, "//button[contains(text(), 'заказ') or contains(text(), 'Войти')]"))
         
-        # Выполняем стабильный Drag and Drop
+        # Выполняем Drag and Drop
         drag_and_drop_html5(self.driver, ingredient_el, target_el)
         
         # Браузеру необходимо время завершить выполнение JS-скриптов и обновить состояние кнопки (специфика React)
         time.sleep(0.5)
+        # self.wait_clickable(target_el) 
         
         # Кликаем по кнопке оформления заказа
         target_el.click()
 
     @allure.step("Получить ID заказа из всплывающего окна подтверждения")
     def get_popup_order_id(self):
-        from selenium.webdriver.support import expected_conditions as EC
-        from locators.homepage_locators import HomePageLocators
+        # Сначала просто дожидаемся физического появления окна на экране
+        self.wait_visible(HomePageLocators.POPUP_ORDER_ID)
         
-        # Ждем появления элемента на экране
-        element = self.wait_visible(HomePageLocators.POPUP_ORDER_ID)
+        # Создаем локальный wait с игнорированием StaleElement ошибок
+        secure_wait = WebDriverWait(
+            self.driver, 
+            timeout=15, 
+            ignored_exceptions=(StaleElementReferenceException,)
+        )
         
-        # Ждем, пока текст элемента перестанет отображать хардкодид "9999"
-        # и пока не произойдет генерация реального ID
-        self.wait.until(
-            lambda d: d.find_element(*HomePageLocators.POPUP_ORDER_ID).text != "9999",
+        # Запускаем безопасный цикл проверки текста
+        secure_wait.until(
+            lambda d: d.find_element(*HomePageLocators.POPUP_ORDER_ID).text.strip() not in ["9999", ""],
             message="Бэкенд не заменил заглушку '9999' на реальный номер заказа за 15 секунд"
         )
         
-        # Возвращаем сгенерированный номер заказа
-        return element.text
+        # Финально забираем уже сгенерированный ID
+        return self.driver.find_element(*HomePageLocators.POPUP_ORDER_ID).text.strip()
+
+    @allure.step("Дождаться, пока каунтер ингредиента увеличится по сравнению со стартовым")
+    def wait_for_ingredient_counter_to_change(self, initial_value):
+        # Метод вернет True, как только число в каунтере станет больше initial_value
+        return self.wait.until(
+            lambda d: int(d.find_element(*HomePageLocators.INGREDIENT_COUNTER).text) > initial_value
+        )
+    
 
 
 

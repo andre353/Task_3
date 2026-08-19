@@ -52,5 +52,5 @@ class TestPasswordRecovery:
             input_type = recovery_page.get_password_input_type()
             container_classes = recovery_page.get_password_container_classes()
             
-            assert input_type == "text" and "input_status_active" in container_classes, \
-                f"Поле не активировано. Тип: '{input_type}', Классы контейнера: '{container_classes}'"
+        assert input_type == "text" and "input_status_active" in container_classes, \
+            f"Поле не активировано. Тип: '{input_type}', Классы контейнера: '{container_classes}'"
