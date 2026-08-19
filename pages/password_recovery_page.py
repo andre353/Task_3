@@ -12,7 +12,7 @@ class PasswordRecoveryPage(BasePage):
         self.send_keys(PasswordRecoveryLocators.EMAIL_INPUT, "test_me@yandex.ru")
         
         # Кликаем по кнопке "Восстановить"
-        self.click(PasswordRecoveryLocators.RESTORE_BUTTON)
+        self.js_click(PasswordRecoveryLocators.RESTORE_BUTTON)
         
         # Ждем, чтобы бэкенд обработал запрос, а браузер перешел на /reset-password
         self.wait_for_url("/reset-password")

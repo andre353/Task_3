@@ -5,6 +5,7 @@ pytest_plugins = [
     "fixtures.drivers",
     "fixtures.home_page",
     "fixtures.authorize",
+    "fixtures.create_api_order"
 ]
 
 def pytest_addoption(parser):

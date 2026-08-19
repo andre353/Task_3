@@ -13,3 +13,16 @@ class HomePageLocators:
     FEED_ORDER_ID = (By.CSS_SELECTOR, "ul[class*='OrderFeed_list'] p[class*='text_type_digits']")
 
 
+    # --- Элементы формы Регистрации (/register) ---
+    REG_NAME_INPUT = (By.XPATH, "//label[text()='Имя']/following-sibling::input")
+    REG_EMAIL_INPUT = (By.XPATH, "//label[text()='Email']/following-sibling::input")
+    REG_PASSWORD_INPUT = (By.XPATH, "//label[text()='Пароль']/following-sibling::input")
+    REG_SUBMIT_BUTTON = (By.XPATH, "//button[text()='Зарегистрироваться']")
+
+    # --- Элементы формы Авторизации (/login) ---
+    LOGIN_EMAIL_INPUT = (By.XPATH, "//label[text()='Email']/following-sibling::input")
+    LOGIN_PASSWORD_INPUT = (By.XPATH, "//label[text()='Пароль']/following-sibling::input")
+    LOGIN_SUBMIT_BUTTON = (By.XPATH, "//button[text()='Войти']")
+
+    CONSTRUCTOR_HEADER_BUTTON = (By.XPATH, "//p[text()='Конструктор']/parent::a")
+

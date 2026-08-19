@@ -15,7 +15,7 @@ class TestPasswordRecovery:
 
         with allure.step("Кликнуть кнопку «Восстановить пароль»"):
             from locators.password_recovery_locators import PasswordRecoveryLocators
-            recovery_page.click(PasswordRecoveryLocators.RECOVER_PASSWORD_BUTTON)
+            recovery_page.js_click(PasswordRecoveryLocators.RECOVER_PASSWORD_BUTTON)
 
         with allure.step("Проверить, что произошел переход на страницу /forgot-password"):
             current_url = recovery_page.wait_and_get_url(USER_FORGOT_PASSWORD)
@@ -32,7 +32,7 @@ class TestPasswordRecovery:
         with allure.step("Ввести почту и нажать кнопку «Восстановить»"):
             from locators.password_recovery_locators import PasswordRecoveryLocators
             recovery_page.send_keys(PasswordRecoveryLocators.EMAIL_INPUT, "test_me@yandex.ru")
-            recovery_page.click(PasswordRecoveryLocators.RESTORE_BUTTON)
+            recovery_page.js_click(PasswordRecoveryLocators.RESTORE_BUTTON)
 
         with allure.step("Проверить редирект на страницу ввода нового пароля /reset-password"):
             current_url = recovery_page.wait_and_get_url(USER_RESET_PASSWORD)
