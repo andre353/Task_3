@@ -3,12 +3,32 @@ import allure
 from locators.homepage_locators import HomePageLocators
 from pages.home_page import HomePage
 from helpers import generate_user_payload, drag_and_drop_html5 
+from urls import BASE_URL, ORDERS_FEED
 
 
-@allure.suite("Основной функционал главной страницы")
+@allure.suite("Проверка основного функционала")
 class TestCoreFunctionality:
 
-    @allure.title("Появление всплывающего окна с деталями при клике на ингредиент")
+    @allure.title("Переход по клику на 'Конструктор'")
+    def test_click_constructor_opens_constructor_page(self, driver):
+        home_page = HomePage(driver)        
+        driver.get(f"{BASE_URL}{ORDERS_FEED}")            
+        home_page.open_home_page_via_constructor_link()
+            
+        assert home_page.get_current_url().rstrip('/') == BASE_URL, (
+            f"Ожидалась главная страница {BASE_URL}, но открыт адрес: {home_page.get_current_url()}"
+        )
+
+    @allure.title("Переход по клику на 'Лента заказов'")
+    def test_click_order_feed_opens_order_feed_page(self, driver):
+        home_page = HomePage(driver)        
+        home_page.go_home()            
+        home_page.open_orders_feed_page_via_feed_link()            
+        expected_url = f"{BASE_URL}{ORDERS_FEED}"
+
+        assert home_page.get_current_url() == expected_url, f"Ожидался URL {expected_url}, но получили {home_page.get_current_url()}"
+
+    @allure.title("Если кликнуть на ингридиент, появится всплывающее окно с деталями")
     def test_click_ingredient_opens_popup_details(self, driver):
         home_page = HomePage(driver)
 
@@ -18,7 +38,7 @@ class TestCoreFunctionality:
         
         assert home_page.is_popup_displayed(), "Всплывающее окно с деталями ингредиента не открылось!"
 
-    @allure.title("Всплывающее окно успешно закрывается при клике на крестик")
+    @allure.title("Всплывающее окно закрывается кликом по крестику")
     def test_click_close_icon_closes_popup(self, driver):
         home_page = HomePage(driver)
         
@@ -29,7 +49,7 @@ class TestCoreFunctionality:
         
         assert home_page.is_popup_closed(), "Всплывающее окно не закрылось после клика на крестик!"
 
-    @allure.title("При добавлении ингредиента в заказ увеличивается его каунтер")
+    @allure.title("При добавлении ингредиента в заказ, увеличивается каунтер данного ингредиента")
     def test_adding_ingredient_increments_counter(self, driver):
         home_page = HomePage(driver)
         
@@ -47,7 +67,7 @@ class TestCoreFunctionality:
 
         assert counter_increased, f"Каунтер ингредиента не увеличился! Стартовое значение: {initial_counter}"
 
-    @allure.title("Залогиненный пользователь может успешно оформить заказ")
+    @allure.title("Залогиненный пользователь может оформить заказ")
     def test_authorized_user_can_place_order(self, driver, login_user_via_ui):
         home_page = HomePage(driver)
             

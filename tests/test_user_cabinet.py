@@ -1,25 +1,24 @@
 import pytest
 import allure
 from pages.user_cabinet_page import UserCabinetPage
+from urls import USER_CABINET, USER_ORDER_HISTORY
 
 
-@allure.suite("Личный кабинет пользователя")
+@allure.suite("Личный кабинет")
 class TestUserCabinet:
 
-    @allure.title("Успешный переход в личный кабинет по клику на 'Личный кабинет'")
+    @allure.title("Переход по клику на 'Личный кабинет'")
     def test_navigation_to_user_cabinet(self, driver, login_user):
         cabinet_page = UserCabinetPage(driver)
-        from urls import USER_CABINET
 
         cabinet_page.click_header_cabinet_button()
 
         current_url = cabinet_page.wait_and_get_url(USER_CABINET)
         assert USER_CABINET in current_url, f"Перейти в ЛК не удалось. Текущий URL: {current_url}"
 
-    @allure.title("Успешный переход в раздел 'История заказов'")
+    @allure.title("Переход в раздел 'История заказов'")
     def test_navigation_to_orders_history(self, driver, login_user):
         cabinet_page = UserCabinetPage(driver)
-        from urls import USER_ORDER_HISTORY
 
         # Переходим в личный кабинет
         cabinet_page.click_header_cabinet_button()
@@ -29,7 +28,7 @@ class TestUserCabinet:
         current_url = cabinet_page.wait_and_get_url(USER_ORDER_HISTORY)
         assert USER_ORDER_HISTORY in current_url, f"Секция 'История заказов' не открылась. URL: {current_url}"
 
-    @allure.title("Успешный выход из аккаунта")
+    @allure.title("Выход из аккаунта")
     def test_user_logout(self, driver, login_user):
         cabinet_page = UserCabinetPage(driver)
 

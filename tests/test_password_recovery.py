@@ -5,7 +5,7 @@ from pages.password_recovery_page import PasswordRecoveryPage
 @allure.suite("Восстановление пароля")
 class TestPasswordRecovery:
 
-    @allure.title("Переход на страницу восстановления пароля, кликая «Восстановить пароль»")
+    @allure.title("Переход на страницу восстановления пароля по кнопке «Восстановить пароль»")
     def test_navigation_to_forgot_password_page(self, driver):
         recovery_page = PasswordRecoveryPage(driver)
         from urls import USER_CABINET_LOGIN, USER_FORGOT_PASSWORD, BASE_URL

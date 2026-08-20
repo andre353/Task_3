@@ -79,8 +79,3 @@ class BasePage:
         """Переходит на главную страницу Stellar Burgers"""
         self.driver.get(BASE_URL)
 
-    def should_be_home_page(self):
-        """Проверяет соответствие текущего адреса"""
-        assert self.get_current_url() == BASE_URL, (
-            f"Ожидалась главная страница {BASE_URL}, но открыт адрес: {self.get_current_url()}"
-        )

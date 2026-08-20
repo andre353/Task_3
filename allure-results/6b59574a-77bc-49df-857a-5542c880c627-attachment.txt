@@ -1,0 +1,1 @@
+[33mWARNING [0m selenium.webdriver.common.selenium_manager:selenium_manager.py:163 The geckodriver version (0.36.0) detected in PATH at C:\Webdrivers\geckodriver\geckodriver.exe might not be compatible with the detected firefox version (152.0.5); currently, geckodriver 0.37.1 is recommended for firefox 152.*, so it is advised to delete the driver in PATH and retry

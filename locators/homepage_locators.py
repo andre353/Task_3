@@ -25,5 +25,4 @@ class HomePageLocators:
     LOGIN_PASSWORD_INPUT = (By.XPATH, "//label[text()='Пароль']/following-sibling::input")
     LOGIN_SUBMIT_BUTTON = (By.XPATH, "//button[text()='Войти']")
 
-    CONSTRUCTOR_HEADER_BUTTON = (By.XPATH, "//p[text()='Конструктор']/parent::a")
 

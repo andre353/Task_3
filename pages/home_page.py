@@ -2,21 +2,34 @@ import allure
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
 from locators.homepage_locators import HomePageLocators
+from locators.base_locators import BaseLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.support import expected_conditions as EC
 from helpers import drag_and_drop_html5
 
 
 class HomePage(BasePage):
     
-    @allure.step("Открыть главную страницу Stellar Burgers через навигацию хедера")
+    @allure.step("Открыть главную страницу Stellar Burgers через навигацию хедера, кликнув пункт лого")
     def open_home_page(self):
-        from locators.homepage_locators import HomePageLocators
         try:
-            self.click(HomePageLocators.CONSTRUCTOR_HEADER_BUTTON)
+            self.click(BaseLocators.LOGO_LINK)
         except Exception:
             # Если мы и так на главной и кнопки нет — просто идем дальше
             self.go_home()
+
+    @allure.step("Открыть главную страницу Stellar Burgers через навигацию хедера, кликнув пункт меню Конструктор")
+    def open_home_page_via_constructor_link(self):
+        try:
+            self.click(BaseLocators.CONSTRUCTOR_HEADER_LINK)
+        except Exception:
+            # Если мы и так на главной и кнопки нет — просто идем дальше
+            self.go_home()
+
+    @allure.step("Открыть страницу Лента заказов Stellar Burgers через навигацию хедера, кликнув пункт меню Лента Заказов")
+    def open_orders_feed_page_via_feed_link(self):
+        self.click(BaseLocators.ORDERS_FEED_PAGE_LINK)
 
     @allure.step("Кликнуть на ингредиент для открытия модального окна")
     def click_ingredient(self):
@@ -32,7 +45,6 @@ class HomePage(BasePage):
 
     @allure.step("Проверить, что всплывающее окно закрылось (отсутствует в DOM или скрыто)")
     def is_popup_closed(self):
-        from selenium.webdriver.support import expected_conditions as EC
         try:
             self.wait.until(EC.invisibility_of_element_located(HomePageLocators.POPUP))
             return True
