@@ -29,4 +29,5 @@ def login_user(driver):
     if access_token:
         requests.delete(f"{BASE_URL}/api/auth/user", headers={"Authorization": access_token})
 
+    driver.refresh()
 

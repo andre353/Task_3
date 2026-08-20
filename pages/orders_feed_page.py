@@ -2,6 +2,8 @@ import allure
 from pages.base_page import BasePage
 from locators.orders_feed_locators import OrdersFeedLocators
 from locators.homepage_locators import HomePageLocators
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class OrdersFeedPage(BasePage):
@@ -43,3 +45,7 @@ class OrdersFeedPage(BasePage):
     def get_orders_in_progress(self):
         elements = self.wait_all_elements(OrdersFeedLocators.ORDERS_IN_PROGRESS_LIST)
         return [el.text for el in elements]
+
+        
+
+

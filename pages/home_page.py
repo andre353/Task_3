@@ -66,7 +66,7 @@ class HomePage(BasePage):
         
         # Находим элементы на странице
         ingredient_el = self.wait_visible(HomePageLocators.INGREDIENT)
-        target_el = self.wait_visible((By.XPATH, "//button[contains(text(), 'заказ') or contains(text(), 'Войти')]"))
+        target_el = self.wait_visible(HomePageLocators.PLACE_ORDER_BUTTON)
         
         # Выполняем Drag and Drop
         drag_and_drop_html5(self.driver, ingredient_el, target_el)
@@ -74,8 +74,8 @@ class HomePage(BasePage):
         # Браузеру необходимо время завершить выполнение JS-скриптов и обновить состояние кнопки (специфика React)
         self.wait_clickable(target_el) 
         
-        # Кликаем по кнопке оформления заказа
-        target_el.click()
+        # Кликаем по кнопке оформления заказа вместо target_el.click() для обхода(игнорирования) любых оверлеев
+        self.driver.execute_script("arguments[0].click();", target_el)
 
     @allure.step("Получить ID заказа из всплывающего окна подтверждения")
     def get_popup_order_id(self):
