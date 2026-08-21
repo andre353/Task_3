@@ -21,22 +21,10 @@ class UserCabinetPage(BasePage):
 
     @allure.step("Получить список номеров заказов из истории пользователя")
     def get_history_order_numbers(self):
-        # Дожидаемся корректного URL
-        WebDriverWait(self.driver, 10).until(
-            EC.url_contains(USER_ORDER_HISTORY)
-        )
-        
-        try:
-            # Проверяем, отрисовал ли React карточки (ждем 3 секунды)
-            elements = WebDriverWait(self.driver, 3).until(
-                EC.visibility_of_all_elements_located(UserCabinetLocators.ORDERS_HISTORY_NUMBERS)
-            )
-        except TimeoutException:
-            # Если веб-сокеты не успели отрендерить карточки — обновляем состояние страницы через JS
-            self.driver.execute_script("location.reload(true);")
-            # Ждем появления элементов
-            elements = self.wait_all_visible(UserCabinetLocators.ORDERS_HISTORY_NUMBERS)
-            
+        elements = self.get_elements_with_retry_on_refresh(
+            locator=UserCabinetLocators.ORDERS_HISTORY_NUMBERS,
+            url_trigger_text=USER_ORDER_HISTORY
+        )        
         return [el.text.strip().lstrip('#').lstrip('0') for el in elements]   
 
     @allure.step("Кликнуть по кнопке выхода из аккаунта")

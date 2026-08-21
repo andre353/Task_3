@@ -1,12 +1,14 @@
 from pages.base_page import BasePage
+from locators.base_locators import BaseLocators
 from locators.password_recovery_locators import PasswordRecoveryLocators
-from urls import BASE_URL
+from selenium.webdriver.common.by import By
+from urls import BASE_URL, USER_FORGOT_PASSWORD, USER_RESET_PASSWORD
 
 
 class PasswordRecoveryPage(BasePage):
     def open_reset_page(self):
         # Открываем страницу восстановления пароля
-        self.driver.get(f"{BASE_URL}/forgot-password")
+        self.navigate_to(f"{BASE_URL}{USER_FORGOT_PASSWORD}")
         
         # Вводим тестовый email
         self.send_keys(PasswordRecoveryLocators.EMAIL_INPUT, "test_me@yandex.ru")
@@ -15,7 +17,7 @@ class PasswordRecoveryPage(BasePage):
         self.js_click(PasswordRecoveryLocators.RESTORE_BUTTON)
         
         # Ждем, чтобы бэкенд обработал запрос, а браузер перешел на /reset-password
-        self.wait_for_url("/reset-password")
+        self.wait_for_url(USER_RESET_PASSWORD)
 
     def click_show_password_button(self):
         self.js_click(PasswordRecoveryLocators.SHOW_PASSWORD_INPUT_BUTTON)
@@ -28,8 +30,7 @@ class PasswordRecoveryPage(BasePage):
         input_element = self.wait_visible(PasswordRecoveryLocators.PASSWORD_INPUT)
         
         # Поднимаемся к родительскому контейнеру <div>
-        from selenium.webdriver.common.by import By
-        container_element = input_element.find_element(By.XPATH, "./parent::div")
+        container_element = input_element.find_element(*BaseLocators.PARENT_ELEMENT)
         
         # Возвращаем классы именно контейнера, где и появляется 'input_status_active'
         return container_element.get_attribute("class")

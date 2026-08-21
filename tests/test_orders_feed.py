@@ -1,5 +1,6 @@
 import pytest
 import allure
+from locators.base_locators import BaseLocators
 from locators.user_cabinet_locators import UserCabinetLocators
 from pages.orders_feed_page import OrdersFeedPage
 from pages.home_page import HomePage
@@ -44,7 +45,7 @@ class TestOrdersFeed:
 
         with allure.step("Перейти в ленту заказов и принудительно обновить состояние веб-сокетов браузера, дабы получить актуальный новый заказ"):
             feed_page.open_feed_page()
-            driver.execute_script("location.reload(true);")
+            feed_page.refresh_page_via_js()
 
         with allure.step("Проверить, что номер заказа из истории отображается в общем списке ленты заказов"):
             orders_in_feed = feed_page.get_orders_in_progress()
@@ -71,7 +72,7 @@ class TestOrdersFeed:
         with allure.step("Вернуться в Ленту заказов и дождаться изменения счетчика"):
             feed_page.open_feed_page()
             # Принудительно сбрасываем кэш сокетов
-            driver.execute_script("location.reload(true);")
+            feed_page.refresh_page_via_js()
             
             # Метод ожидания возвращает True, когда и если число счетчика вырастет
             counter_increased = feed_page.wait_for_all_time_counter_to_change(initial_all_time)
@@ -94,7 +95,7 @@ class TestOrdersFeed:
 
         with allure.step("Вернуться в Ленту заказов и дождаться изменения счетчика"):
             feed_page.open_feed_page()
-            driver.execute_script("location.reload(true);")
+            feed_page.refresh_page_via_js()
             
             # Ждем изменения счетчика относительно зафиксированного начального значения
             counter_increased = feed_page.wait_for_today_counter_to_change(initial_today)
@@ -117,7 +118,7 @@ class TestOrdersFeed:
             feed_page.open_feed_page()
             
             # Принудительно сбрасываем кэш вкладки для принудительного обновления стейта сокетов ленты
-            driver.execute_script("location.reload(true);")
+            feed_page.refresh_page_via_js()
             
             orders_in_progress = feed_page.get_orders_in_progress()
             short_order_id = order_number.lstrip('0')

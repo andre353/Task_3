@@ -1,6 +1,8 @@
 import pytest
 import allure
+from locators.base_locators import BaseLocators
 from locators.homepage_locators import HomePageLocators
+from pages.base_page import BasePage
 from pages.home_page import HomePage
 from helpers import generate_user_payload, drag_and_drop_html5 
 from urls import BASE_URL, ORDERS_FEED
@@ -12,8 +14,8 @@ class TestCoreFunctionality:
     @allure.title("Переход по клику на 'Конструктор'")
     def test_click_constructor_opens_constructor_page(self, driver):
         home_page = HomePage(driver)        
-        driver.get(f"{BASE_URL}{ORDERS_FEED}")            
-        home_page.open_home_page_via_constructor_link()
+        home_page.navigate_to(f"{BASE_URL}{ORDERS_FEED}")            
+        home_page.click(BaseLocators.CONSTRUCTOR_HEADER_LINK)
             
         assert home_page.get_current_url().rstrip('/') == BASE_URL, (
             f"Ожидалась главная страница {BASE_URL}, но открыт адрес: {home_page.get_current_url()}"
@@ -22,8 +24,8 @@ class TestCoreFunctionality:
     @allure.title("Переход по клику на 'Лента заказов'")
     def test_click_order_feed_opens_order_feed_page(self, driver):
         home_page = HomePage(driver)        
-        home_page.go_home()            
-        home_page.open_orders_feed_page_via_feed_link()            
+        home_page.navigate_to(BASE_URL)            
+        home_page.click(BaseLocators.ORDERS_FEED_PAGE_LINK)           
         expected_url = f"{BASE_URL}{ORDERS_FEED}"
 
         assert home_page.get_current_url() == expected_url, f"Ожидался URL {expected_url}, но получили {home_page.get_current_url()}"

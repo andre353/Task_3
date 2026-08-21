@@ -4,14 +4,14 @@ from locators.orders_feed_locators import OrdersFeedLocators
 from locators.homepage_locators import HomePageLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from urls import BASE_URL, ORDERS_FEED        
 
 
 class OrdersFeedPage(BasePage):
 
     @allure.step("Открыть страницу 'Лента заказов'")
     def open_feed_page(self):
-        from urls import BASE_URL, ORDERS_FEED        
-        self.driver.get(f"{BASE_URL}{ORDERS_FEED}")
+        self.navigate_to(f"{BASE_URL}{ORDERS_FEED}")
 
     @allure.step("Кликнуть по первому заказу в ленте")
     def click_first_order(self):
@@ -43,7 +43,7 @@ class OrdersFeedPage(BasePage):
 
     @allure.step("Получить список номеров всех заказов из раздела 'В работе'")
     def get_orders_in_progress(self):
-        elements = self.wait_all_elements(OrdersFeedLocators.ORDERS_IN_PROGRESS_LIST)
+        elements = self.wait_all_visible(OrdersFeedLocators.ORDERS_IN_PROGRESS_LIST)
         return [el.text for el in elements]
 
         

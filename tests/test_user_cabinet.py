@@ -13,7 +13,8 @@ class TestUserCabinet:
 
         cabinet_page.click_header_cabinet_button()
 
-        current_url = cabinet_page.wait_and_get_url(USER_CABINET)
+        cabinet_page.wait_for_url(USER_CABINET)
+        current_url = cabinet_page.get_current_url()
         assert USER_CABINET in current_url, f"Перейти в ЛК не удалось. Текущий URL: {current_url}"
 
     @allure.title("Переход в раздел 'История заказов'")
@@ -25,7 +26,8 @@ class TestUserCabinet:
         # Переходим в историю заказов
         cabinet_page.click_orders_history_button()
 
-        current_url = cabinet_page.wait_and_get_url(USER_ORDER_HISTORY)
+        cabinet_page.wait_for_url(USER_ORDER_HISTORY)
+        current_url = cabinet_page.get_current_url()
         assert USER_ORDER_HISTORY in current_url, f"Секция 'История заказов' не открылась. URL: {current_url}"
 
     @allure.title("Выход из аккаунта")
